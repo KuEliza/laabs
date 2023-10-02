@@ -136,10 +136,26 @@ matrix_test = np.random.randint(10, size=(10, 10))
 
 window = Tk()
 window.title("8 лабораторная работа")
-window.geometry('600x450')
+window.geometry('300x100')
 window.resizable(False, False)
 
+
 def start():
+    win = Toplevel()
+    win.title("Результат")
+    win.geometry('600x350')
+    win.resizable(False, False)
+
+    lbl_result = Label(win, text="Результат:")
+    lbl_result.grid(column=0, row=3)
+    text_result = Text(win, width=74, height=10)
+    text_result.grid(column=0, row=4)
+
+    lbl_max = Label(win, text="Матрица с наибольшей суммой элементов главной диагонали:")
+    lbl_max.grid(column=0, row=5)
+    text_max = Text(win, width=74, height=8, state='disabled')
+    text_max.grid(column=0, row=6)
+
     size = int(txt.get())
     if size < 4:
         messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть меньше 4!')
@@ -179,23 +195,14 @@ def start():
         text_max.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[max_index]) + '\n')
         text_max.configure(state='disabled')
 
+
 frame_generate = LabelFrame(window, text='Инициализация')
-frame_generate.grid(column=0, row=0)
-lbl_size = Label(frame_generate, text="Введите размер квадратной матрицы:")
-lbl_size.grid(column=0, row=0)
-txt = Entry(frame_generate, width=10)
-txt.grid(column=0, row=1)
-btn = Button(frame_generate, text="Старт", command=start)
-btn.grid(column=0, row=2)
-
-lbl_result = Label(window, text="Результат:")
-lbl_result.grid(column=0, row=3)
-text_result = Text(window, width=74, height=10)
-text_result.grid(column=0, row=4)
-
-lbl_max = Label(window, text="Матрица с наибольшей суммой элементов главной диагонали:")
-lbl_max.grid(column=0, row=5)
-text_max = Text(window, width=74, height=8, state='disabled')
-text_max.grid(column=0, row=6)
+frame_generate.pack()
+lbl_size = Label(frame_generate, text="Введите размер квадратной матрицы:", justify='center')
+lbl_size.pack()
+txt = Entry(frame_generate, width=10, justify='center')
+txt.pack()
+btn = Button(frame_generate, text="Старт", command=start, justify='center')
+btn.pack()
 
 window.mainloop()
