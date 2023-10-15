@@ -136,7 +136,7 @@ class App(tk.Tk):
         # настройка основного окна
         self.title("8 лабораторная работа")
         self.geometry('300x100')
-        self.resizable(False, False)
+        self.resizable(False, False) # фиксированный размер
 
         # текст размера
         self.lbl_size = ttk.Label(self, text="Введите размер квадратной матрицы:")
@@ -177,15 +177,8 @@ class App(tk.Tk):
             text_result.grid(column=0, row=1)
 
             matrix_test = np.random.randint(10, size=(size, size)) #генерация матрицы
-            print('\nСгенерированная матрица:')
-            for row in matrix_test:
-                print("".join(['{:<5}'.format(item) for item in row]))
-            print()
             task = MatrixClass(matrix_test)  # создаём объект класса матрицы
             task.change_el_primary_secondary_diagonal()  # запускаем в работу на алгоритм согласно варианту
-            task.print_matrices()  # выводим все возможные варианты матрицы
-            task.print_matrix_max_sum()  # выводим матрицу с наибольшей суммой по главной диагонали
-            print('\nРабота программы завершена успешно.')
 
             text_result.configure(state='normal')
             text_result.delete(1.0, END) # очищаем текстовое поле
