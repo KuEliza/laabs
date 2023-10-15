@@ -15,13 +15,14 @@
 import itertools
 import copy
 import numpy as np
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
 
 
-# класс
+# класс для работы с матрицами
 class MatrixClass(object):
     # атрибуты
     matrix = [[]]
@@ -127,82 +128,88 @@ class MatrixClass(object):
             if not equals: # если метки равности нет, значит мы не повторимся
                 self.matrices.append(new_matrix)  # добавим матрицу в список результатов
 
+# класс приложения
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
 
+        # настройка основного окна
+        self.title("8 лабораторная работа")
+        self.geometry('300x100')
+        self.resizable(False, False)
 
-matrix_test = np.random.randint(10, size=(10, 10))
+        # текст размера
+        self.lbl_size = ttk.Label(self, text="Введите размер квадратной матрицы:")
+        self.lbl_size.pack()
 
+        # поле ввода размера матрицы
+        self.textbox_size = ttk.Entry(self, width=10, justify="center")
+        self.textbox_size.pack()
 
-# графическая оболочка
+        # кнопка запуска программы
+        self.btn_start = ttk.Button(self, text="Старт")
+        self.btn_start['command'] = self.start
+        self.btn_start.pack()
 
-window = Tk()
-window.title("8 лабораторная работа")
-window.geometry('300x100')
-window.resizable(False, False)
+    def start(self):
+        size = int(self.textbox_size.get())
+        if size < 4:
+            messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть меньше 4!')
+        else:
+            # закрыть все окна верхнего уровня
+            for widget in self.winfo_children():
+                if isinstance(widget, tk.Toplevel):
+                    widget.destroy()
 
+            # новое окно + его настройки
+            window_result = Toplevel(self)
+            window_result.title("Результат ввода матрицы " + str(size) + "x" + str(size))
+            window_result.geometry('500x500')
+            window_result.resizable(False, False) # фиксированный размер
 
-def start():
-    win = Toplevel()
-    win.title("Результат")
-    win.geometry('600x350')
-    win.resizable(False, False)
+            # текст результата
+            lbl_result = Label(window_result, text="Результат:")
+            lbl_result.grid(column=0, row=0)
 
-    lbl_result = Label(win, text="Результат:")
-    lbl_result.grid(column=0, row=3)
-    text_result = Text(win, width=74, height=10)
-    text_result.grid(column=0, row=4)
+            # вывод результата
+            text_result = Text(window_result, width=62, height=29)
+            text_result.tag_config('max', background="white", foreground="green")
+            text_result.grid(column=0, row=1)
 
-    lbl_max = Label(win, text="Матрица с наибольшей суммой элементов главной диагонали:")
-    lbl_max.grid(column=0, row=5)
-    text_max = Text(win, width=74, height=8, state='disabled')
-    text_max.grid(column=0, row=6)
+            matrix_test = np.random.randint(10, size=(size, size)) #генерация матрицы
+            print('\nСгенерированная матрица:')
+            for row in matrix_test:
+                print("".join(['{:<5}'.format(item) for item in row]))
+            print()
+            task = MatrixClass(matrix_test)  # создаём объект класса матрицы
+            task.change_el_primary_secondary_diagonal()  # запускаем в работу на алгоритм согласно варианту
+            task.print_matrices()  # выводим все возможные варианты матрицы
+            task.print_matrix_max_sum()  # выводим матрицу с наибольшей суммой по главной диагонали
+            print('\nРабота программы завершена успешно.')
 
-    size = int(txt.get())
-    if size < 4:
-        messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть меньше 4!')
-    else:
-        matrix_test = np.random.randint(10, size=(size, size))
-        print('\nСгенерированная матрица:')
-        for row in matrix_test:
-            print("".join(['{:<5}'.format(item) for item in row]))
-        print()
-        task = MatrixClass(matrix_test) # создаём объект класса матрицы
-        task.change_el_primary_secondary_diagonal() # запускаем в работу на алгоритм согласно варианту
-        task.print_matrices() # выводим все возможные варианты матрицы
-        task.print_matrix_max_sum() # выводим матрицу с наибольшей суммой по главной диагонали
-        print('\nРабота программы завершена успешно.')
-
-        text_max.configure(state='normal')
-        text_result.delete(1.0, END)
-        for i in range(len(task.matrices)):
-            text_result.insert(END, 'Матрица №' + str(i + 1))
-            text_result.insert(END, "\n")
-            for row in task.matrices[i]:
-                text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]))
+            text_result.configure(state='normal')
+            text_result.delete(1.0, END) # очищаем текстовое поле
+            # вывод всех возможных матриц
+            for i in range(len(task.matrices)):
+                text_result.insert(END, 'Матрица №' + str(i + 1))
                 text_result.insert(END, "\n")
-            task.sum.append(task.get_parameters(task.matrices[i]))
-            text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[i]) + '\n')
-            text_result.insert(END, "\n")
-            text_max.configure(state='disabled')
+                for row in task.matrices[i]:
+                    text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]))
+                    text_result.insert(END, "\n")
+                task.sum.append(task.get_parameters(task.matrices[i]))
+                text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[i]) + '\n')
+                text_result.insert(END, "\n\n\n")
 
-        text_max.configure(state='normal')
-        text_max.delete(1.0, END)
-        text_max.insert(END, 'Матрица с наибольшей суммой элементов главной диагонали:')
-        max_index = task.sum.index(max(task.sum))
-        text_max.insert(END, '\nМатрица №' + str(max_index + 1) + '\n')
-        for row in task.matrices[max_index]:
-            text_max.insert(END, "".join(['{:<5}'.format(item) for item in row]))
-            text_max.insert(END, "\n")
-        text_max.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[max_index]) + '\n')
-        text_max.configure(state='disabled')
+            # вывод матрицы с макс.суммой по гл.диагонали
+            text_result.insert(END, 'Матрица с наибольшей суммой элементов главной диагонали:', 'max')
+            max_index = task.sum.index(max(task.sum))
+            text_result.insert(END, '\nМатрица №' + str(max_index + 1) + '\n', 'max')
+            for row in task.matrices[max_index]:
+                text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]), 'max')
+                text_result.insert(END, "\n")
+            text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[max_index]) + '\n', 'max')
+            text_result.configure(state='disabled')
 
-
-frame_generate = LabelFrame(window, text='Инициализация')
-frame_generate.pack()
-lbl_size = Label(frame_generate, text="Введите размер квадратной матрицы:", justify='center')
-lbl_size.pack()
-txt = Entry(frame_generate, width=10, justify='center')
-txt.pack()
-btn = Button(frame_generate, text="Старт", command=start, justify='center')
-btn.pack()
-
-window.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
