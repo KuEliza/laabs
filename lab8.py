@@ -153,63 +153,66 @@ class App(tk.Tk):
         self.btn_start.pack()
 
     def start(self):
-        size = int(self.textbox_size.get())
-        if size < 4:
-            messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть меньше 4!')
-        if size > 13:
-            messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть больше 13!')
-        else:
-            # закрыть все окна верхнего уровня
-            for widget in self.winfo_children():
-                if isinstance(widget, tk.Toplevel):
-                    widget.destroy()
+        try:
+            size = int(self.textbox_size.get())
+            if size < 4:
+                messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть меньше 4!')
+            if size > 13:
+                messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть больше 13!')
+            else:
+                # закрыть все окна верхнего уровня
+                for widget in self.winfo_children():
+                    if isinstance(widget, tk.Toplevel):
+                        widget.destroy()
 
-            # новое окно + его настройки
-            window_result = Toplevel(self)
-            window_result.title("Результат ввода матрицы " + str(size) + "x" + str(size))
-            window_result.geometry('500x500')
-            window_result.wm_geometry("+%d+%d" % (600, 300)) # расположение окна по центру экрана
-            window_result.resizable(False, False) # фиксированный размер
+                # новое окно + его настройки
+                window_result = Toplevel(self)
+                window_result.title("Результат ввода матрицы " + str(size) + "x" + str(size))
+                window_result.geometry('500x500')
+                window_result.wm_geometry("+%d+%d" % (600, 300)) # расположение окна по центру экрана
+                window_result.resizable(False, False) # фиксированный размер
 
-            # текст результата
-            lbl_result = Label(window_result, text="Результат:")
-            lbl_result.grid(column=0, row=0)
+                # текст результата
+                lbl_result = Label(window_result, text="Результат:")
+                lbl_result.grid(column=0, row=0)
 
-            # вывод результата
-            text_result = Text(window_result, width=60, height=29)
-            text_result.tag_config('max', background="white", foreground="green")
-            text_result.grid(column=0, row=1)
+                # вывод результата
+                text_result = Text(window_result, width=60, height=29)
+                text_result.tag_config('max', background="white", foreground="green")
+                text_result.grid(column=0, row=1)
 
-            scrollb = ttk.Scrollbar(window_result, command=text_result.yview)
-            scrollb.grid(column=1, row=1, sticky='nsew')
-            text_result['yscrollcommand'] = scrollb.set
+                scrollb = ttk.Scrollbar(window_result, command=text_result.yview)
+                scrollb.grid(column=1, row=1, sticky='nsew')
+                text_result['yscrollcommand'] = scrollb.set
 
-            matrix_test = np.random.randint(10, size=(size, size)) #генерация матрицы
-            task = MatrixClass(matrix_test)  # создаём объект класса матрицы
-            task.change_el_primary_secondary_diagonal()  # запускаем в работу на алгоритм согласно варианту
+                matrix_test = np.random.randint(10, size=(size, size)) #генерация матрицы
+                task = MatrixClass(matrix_test)  # создаём объект класса матрицы
+                task.change_el_primary_secondary_diagonal()  # запускаем в работу на алгоритм согласно варианту
 
-            text_result.configure(state='normal')
-            text_result.delete(1.0, END) # очищаем текстовое поле
-            # вывод всех возможных матриц
-            for i in range(len(task.matrices)):
-                text_result.insert(END, 'Матрица №' + str(i + 1))
-                text_result.insert(END, "\n")
-                for row in task.matrices[i]:
-                    text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]))
+                text_result.configure(state='normal')
+                text_result.delete(1.0, END) # очищаем текстовое поле
+                # вывод всех возможных матриц
+                for i in range(len(task.matrices)):
+                    text_result.insert(END, 'Матрица №' + str(i + 1))
                     text_result.insert(END, "\n")
-                task.sum.append(task.get_parameters(task.matrices[i]))
-                text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[i]) + '\n')
-                text_result.insert(END, "\n\n\n")
+                    for row in task.matrices[i]:
+                        text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]))
+                        text_result.insert(END, "\n")
+                    task.sum.append(task.get_parameters(task.matrices[i]))
+                    text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[i]) + '\n')
+                    text_result.insert(END, "\n\n\n")
 
-            # вывод матрицы с макс.суммой по гл.диагонали
-            text_result.insert(END, 'Матрица с наибольшей суммой элементов главной диагонали:', 'max')
-            max_index = task.sum.index(max(task.sum))
-            text_result.insert(END, '\nМатрица №' + str(max_index + 1) + '\n', 'max')
-            for row in task.matrices[max_index]:
-                text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]), 'max')
-                text_result.insert(END, "\n")
-            text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[max_index]) + '\n', 'max')
-            text_result.configure(state='disabled')
+                # вывод матрицы с макс.суммой по гл.диагонали
+                text_result.insert(END, 'Матрица с наибольшей суммой элементов главной диагонали:', 'max')
+                max_index = task.sum.index(max(task.sum))
+                text_result.insert(END, '\nМатрица №' + str(max_index + 1) + '\n', 'max')
+                for row in task.matrices[max_index]:
+                    text_result.insert(END, "".join(['{:<5}'.format(item) for item in row]), 'max')
+                    text_result.insert(END, "\n")
+                text_result.insert(END, "Сумма элементов главной диагонали = " + str(task.sum[max_index]) + '\n', 'max')
+                text_result.configure(state='disabled')
+        except ValueError:
+            messagebox.showerror('Внимание!', 'Ошибка: введите число!')
 
 if __name__ == "__main__":
     app = App()
