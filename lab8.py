@@ -4,7 +4,7 @@
 2) усложнить написанную программу, введя по своему усмотрению в условие минимум одно ограничение
 на характеристики объектов и целевую функцию для оптимизации решения.
 
-Вариант 7:
+Вариант 9:
 Дана квадратная матрица. Сформировать все возможные варианты данной матрицы путём перестановки
 элементов главной и побочной диагонали в каждой строке.
 
@@ -135,11 +135,12 @@ class App(tk.Tk):
 
         # настройка основного окна
         self.title("8 лабораторная работа")
-        self.geometry('300x100+600+100')
+        self.geometry('300x100')
+        self.wm_geometry("+%d+%d" % (600, 400)) # расположение окна по центру экрана
         self.resizable(False, False) # фиксированный размер
 
         # текст размера
-        self.lbl_size = ttk.Label(self, text="Введите размер квадратной матрицы:")
+        self.lbl_size = ttk.Label(self, text="Введите размер квадратной матрицы (от 4 до 13):")
         self.lbl_size.pack()
 
         # поле ввода размера матрицы
@@ -155,6 +156,8 @@ class App(tk.Tk):
         size = int(self.textbox_size.get())
         if size < 4:
             messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть меньше 4!')
+        if size > 13:
+            messagebox.showerror('Внимание!', 'Ошибка: Размер матрицы не может быть больше 13!')
         else:
             # закрыть все окна верхнего уровня
             for widget in self.winfo_children():
@@ -164,7 +167,8 @@ class App(tk.Tk):
             # новое окно + его настройки
             window_result = Toplevel(self)
             window_result.title("Результат ввода матрицы " + str(size) + "x" + str(size))
-            window_result.geometry('600x600+500+100')
+            window_result.geometry('500x500')
+            window_result.wm_geometry("+%d+%d" % (600, 300)) # расположение окна по центру экрана
             window_result.resizable(False, False) # фиксированный размер
 
             # текст результата
@@ -172,9 +176,13 @@ class App(tk.Tk):
             lbl_result.grid(column=0, row=0)
 
             # вывод результата
-            text_result = Text(window_result, width=82, height=49)
+            text_result = Text(window_result, width=60, height=29)
             text_result.tag_config('max', background="white", foreground="green")
             text_result.grid(column=0, row=1)
+
+            scrollb = ttk.Scrollbar(window_result, command=text_result.yview)
+            scrollb.grid(column=1, row=1, sticky='nsew')
+            text_result['yscrollcommand'] = scrollb.set
 
             matrix_test = np.random.randint(10, size=(size, size)) #генерация матрицы
             task = MatrixClass(matrix_test)  # создаём объект класса матрицы
