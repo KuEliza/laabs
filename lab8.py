@@ -135,7 +135,7 @@ class App(tk.Tk):
 
         # настройка основного окна
         self.title("8 лабораторная работа")
-        self.geometry('300x100')
+        self.geometry('300x100+600+100')
         self.resizable(False, False) # фиксированный размер
 
         # текст размера
@@ -164,7 +164,7 @@ class App(tk.Tk):
             # новое окно + его настройки
             window_result = Toplevel(self)
             window_result.title("Результат ввода матрицы " + str(size) + "x" + str(size))
-            window_result.geometry('500x500')
+            window_result.geometry('500x500+500+200')
             window_result.resizable(False, False) # фиксированный размер
 
             # текст результата
