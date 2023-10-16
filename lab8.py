@@ -164,7 +164,7 @@ class App(tk.Tk):
             # новое окно + его настройки
             window_result = Toplevel(self)
             window_result.title("Результат ввода матрицы " + str(size) + "x" + str(size))
-            window_result.geometry('500x500+500+200')
+            window_result.geometry('600x600+500+100')
             window_result.resizable(False, False) # фиксированный размер
 
             # текст результата
@@ -172,7 +172,7 @@ class App(tk.Tk):
             lbl_result.grid(column=0, row=0)
 
             # вывод результата
-            text_result = Text(window_result, width=62, height=29)
+            text_result = Text(window_result, width=82, height=49)
             text_result.tag_config('max', background="white", foreground="green")
             text_result.grid(column=0, row=1)
 
