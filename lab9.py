@@ -11,7 +11,7 @@ def dismiss(win):
     win.destroy()
 
 
-def openfile():
+def openlist():
     try:
         text = open(r'C:\лаба\pil.txt', 'r+')
         return text
@@ -63,7 +63,7 @@ class game:
             messagebox.showwarning(title='Ошибка', message='Введите пароль')
 
         else:
-            file = openfile()
+            file = openlist()
             a = file.readline()[:-1].split(' ')
 
             while True:
@@ -91,7 +91,7 @@ class game:
                 win.protocol('WM_DELETE_WINDOW', lambda: dismiss(win))
 
                 Label(win, text='Вы успешно авторизовались', font='Batang 15 bold').place(x=60, y=20)
-                ttk.Button(win, text='Начать игру', command=lambda: self.play(win)).place(x=160, y=70)
+                ttk.Button(win, text='Начать игру', command=lambda: self.igra(win)).place(x=160, y=70)
 
             elif not f_p:
                 messagebox.showwarning(title='Ошибка', message='Неверный пароль')
@@ -111,7 +111,7 @@ class game:
         txtlog = Label(win, text='Логин', font='Batang 17 bold')
         txtpar = Label(win, text='Пароль', font='Batang 17 bold')
         txt = Label(win, text='Введите логин и пароль', font='Batang 22 bold')
-        button_reg = ttk.Button(win, text='Зарегистрироваться', command=lambda: registrate())
+        button_reg = ttk.Button(win, text='Зарегистрироваться', command=lambda: registration())
 
 
         txt.place(x=150, y=50)
@@ -121,7 +121,7 @@ class game:
         password.place(x=205, y=220, height=40)
         button_reg.place(x=240, y=300)
 
-        def registrate():
+        def registration():
             s_l = login.get()
             s_p = password.get()
 
@@ -133,7 +133,7 @@ class game:
             elif len(s_p) == 0:
                 messagebox.showwarning(title='Ошибка', message='Введите пароль')
             else:
-                file = openfile()
+                file = openlist()
                 a = file.readline()[:-1].split(' ')
 
                 while True:
@@ -151,7 +151,7 @@ class game:
                         f_reg = True
 
                 if not f_reg:
-                    file = openfile()
+                    file = openlist()
                     file.seek(0, os.SEEK_END)
                     file.write(f'{s_l} {s_p}\n')
                     file.close()
@@ -165,26 +165,27 @@ class game:
                     messagebox.showwarning(title='Ошибка', message='Этот аккаунт уже зарегестрирован')
 
 
-    def play(self, window):
+    def igra(self, window):
         window.destroy()
-        BRD_ROWS = BRD_COLS = 8
-        CELL_SZ = 100
+        root.title('Поле')
+        brow = bcol = 8
+        cellsz = 50
 
-        canvas = Canvas(self.main, width=CELL_SZ * BRD_ROWS, height=CELL_SZ * BRD_COLS)
+        canvas = Canvas(self.main, width=cellsz * brow, height=cellsz * bcol)
 
         cell_colors = ['white', 'black']
         ci = 0  # color index
 
-        for row in range(BRD_ROWS):
-            for col in range(BRD_COLS):
-                x1, y1 = col * CELL_SZ, row * CELL_SZ
-                x2, y2 = col * CELL_SZ + CELL_SZ, row * CELL_SZ + CELL_SZ
+        for row in range(brow):
+            for col in range(bcol):
+                x1, y1 = col * cellsz, row * cellsz
+                x2, y2 = col * cellsz + cellsz, row * cellsz + cellsz
                 canvas.create_rectangle((x1, y1), (x2, y2), fill=cell_colors[ci])
 
                 ci = not ci
 
             ci = not ci
-        self.main.geometry('800x800+560+100')
+        self.main.geometry('399x399+560+100')
         canvas.pack()
 
 
