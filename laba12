@@ -13,7 +13,7 @@ from decimal import Decimal, getcontext
 # Вычисления суммы знакопеременного ряда
 def summa(x, t):
     n = 1
-    resul = 0  # результат
+    resul = 0 
     factor = 2
     sign = choice([-1, 1])  # Переменная для смены знака
     matrix = x * x * x  # матрица
@@ -54,10 +54,10 @@ try:
 
     result = summa(x, t)
 
-    # Вывод результата с заданной точностью
+    # Вывод результата
     print(f"\nСумма ряда с точностью {t} знаков после запятой: {result:.{t}f}".rstrip('0').rstrip('.'))
 
-# Ошибка на случай введения не числа в качестве точности
+
 except ValueError:
     print('\nВведите число.')
 
