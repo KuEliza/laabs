@@ -1,0 +1,163 @@
+from tkinter import *
+from tkinter import messagebox
+
+
+
+def button_click(i, j):
+    if place[i][j] == ' ':
+        buttons[i][j].config(text='x', font=("Arial 45 bold"), state='disabled')
+        place[i][j] = 'X'
+        pobeditel = proverka()
+        if not pobeditel:
+            bot()
+        else:
+            final(pobeditel)
+
+
+def new_game():
+    root.destroy()
+    igra()
+
+def end_game():
+    root.destroy()
+
+#Проверка победителя
+def proverka():
+    #строки
+    for row in place:
+        if row[0] == row[1] == row[2] != ' ':
+            return row[0]
+
+    #столбцы
+    for col in range(3):
+        if place[0][col] == place[1][col] == place[2][col] != ' ':
+            return place[0][col]
+
+    #диагонали
+    if place[0][0] == place[1][1] == place[2][2] != ' ':
+        return place[0][0]
+    if place[0][2] == place[1][1] == place[2][0] != ' ':
+        return place[0][2]
+
+    # Проверка ничьей
+    if all(place[i][j] != ' ' for i in range(3) for j in range(3)):
+        return 'Ничья'
+
+    return None
+
+
+
+
+# Алгоритм минимакс
+def minimax(place, depth, is_maximizing):
+    global pobeditel
+    pobeditel = proverka()
+
+    if pobeditel:
+        if pobeditel == 'O':
+            return 1
+        elif pobeditel == 'X':
+            return -1
+        else:
+            return 0
+
+    if is_maximizing:
+        best_score = float('-inf')
+        for i in range(3):
+            for j in range(3):
+                if place[i][j] == ' ':
+                    place[i][j] = 'O'
+                    score = minimax(place, depth + 1, False)
+                    place[i][j] = ' '
+                    best_score = max(score, best_score)
+        return best_score
+    else:
+        best_score = float('inf')
+        for i in range(3):
+            for j in range(3):
+                if place[i][j] == ' ':
+                    place[i][j] = 'X'
+                    score = minimax(place, depth + 1, True)
+                    place[i][j] = ' '
+                    best_score = min(score, best_score)
+        return best_score
+
+
+# Завершение игры
+def final(pobeditel):
+    for row in buttons:
+        for button in row:
+            button.config(state='disabled')
+    if pobeditel == 'Ничья':
+        messagebox.showinfo('Игра завершена', 'Победителя нет')
+        new_game()
+    else:
+        messagebox.showinfo('Игра завершена', f'Победитель: {pobeditel}!')
+        new_game()
+
+
+def bot():
+    best_score = float('-inf')
+    best_move = None
+
+    # Перебор всех возможных ходов
+    for i in range(3):
+        for j in range(3):
+            if place[i][j] == ' ':
+                place[i][j] = 'O'
+                score = minimax(place, 0, False)
+                place[i][j] = ' '
+
+                # Выбор лучшего хода
+                if score > best_score:
+                    best_score = score
+                    best_move = (i, j)
+
+    # Выполнение хода компьютера
+    if best_move:
+        place[best_move[0]][best_move[1]] = 'O'
+        buttons[best_move[0]][best_move[1]].config(text='о', font=("Arial 45 bold"), state='disabled')
+        pobeditel = proverka()
+        if pobeditel:
+            final(pobeditel)
+
+
+
+def igra():
+    global place
+    place = [[' ' for _ in range(3)] for _ in range(3)]
+
+    global root
+    root = Tk()
+    root.title('Крестики-Нолики')
+
+    w = root.winfo_screenwidth() // 2-250
+    h = root.winfo_screenheight() // 2-200
+    root.geometry(f'450x450+{w}+{h}')
+    root.resizable(False, False)
+
+    #кнопки
+    for colum in range(3): root.columnconfigure(index=colum, weight=1)
+    for ro in range(3): root.rowconfigure(index=ro, weight=1)
+    global buttons
+    buttons = []
+    for i in range(3):
+        row = []
+        for j in range(3):
+            button = Button(root, text='  ', font=("Arial 45 bold"), command=lambda x=i, y=j: button_click(x, y))
+            button.grid(row=i, column=j, sticky=NSEW)
+            row.append(button)
+
+
+
+        buttons.append(row)
+
+    btn1 = Button(root, text='Новая игра', command=new_game, background='#B4EEB4', font=('Arial 20 bold'), )
+    btn1.grid(row=3, column=0, columnspan=3, sticky='s')
+    btn1 = Button(root, text='Выход', command=end_game, background='#8B8B83', font=('Arial 20 bold'), )
+    btn1.grid(row=4, column=0, columnspan=3, sticky='s')
+
+    root.mainloop()
+
+
+igra()
