@@ -1,0 +1,60 @@
+"""
+1. Прочитать в виде списков набор данных titanic.csv, взятый из открытых источников
+2. Для прочитанного набора выполнить обработку в соответствии со своим вариантом.
+Вариант № 7.
+Определить количество взрослых(=>18) и детей(<18),
+севших в порту Шербур, и сколько из них выжило
+"""
+
+import csv
+
+
+f = open('tested.csv', 'r')
+file = csv.DictReader(f)
+
+
+age = []
+total = []
+
+surv = []
+total2 = []
+
+
+for colum in file:
+    if colum['Embarked'] == 'C':
+        if colum['Age'] != '':
+            age.append(colum['Age'])
+            data = {
+                'Age': colum['Age']
+            }
+            if colum['Survived'] != '':
+                surv.append(colum['Survived'])
+                data2 = {
+                    'Survived': colum['Survived']
+                }
+            total2.append(data2)
+
+            total.append(data)
+
+
+people = 0
+people2 = 0
+surviv = 0
+
+for i in total:
+    if 18 <= float(i['Age']) <= 100:
+        people += 1
+
+for i in total:
+    if 1 <= float(i['Age']) <= 17:
+        people2 += 1
+
+for i in total2:
+    if  float(i['Survived']) == 1:
+        surviv += 1
+
+
+print(f'Взрослых село на борт : {people}.')
+print(f'Детей село на борт : {people2}.')
+
+print(f'Из них выжило : {surviv}.')
