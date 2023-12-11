@@ -19,21 +19,16 @@ total = []
 surv = []
 total2 = []
 
-
+#Проверка столбцов
 for colum in file:
     if colum['Embarked'] == 'C':
         if colum['Age'] != '':
             age.append(colum['Age'])
-            data = {
-                'Age': colum['Age']
-            }
+            data = { 'Age': colum['Age']}
             if colum['Survived'] != '':
                 surv.append(colum['Survived'])
-                data2 = {
-                    'Survived': colum['Survived']
-                }
+                data2 = { 'Survived': colum['Survived'] }
             total2.append(data2)
-
             total.append(data)
 
 
@@ -41,14 +36,15 @@ people = 0
 people2 = 0
 surviv = 0
 
+#Взрослые
 for i in total:
     if 18 <= float(i['Age']) <= 100:
         people += 1
-
+#Дети
 for i in total:
     if 1 <= float(i['Age']) <= 17:
         people2 += 1
-
+#Выжившие
 for i in total2:
     if  float(i['Survived']) == 1:
         surviv += 1
