@@ -9,7 +9,7 @@
 import csv
 
 
-f = open('tested.csv', 'r')
+f = open('titanic.csv', 'r')
 file = csv.DictReader(f)
 
 
